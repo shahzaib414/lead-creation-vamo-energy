@@ -27,7 +27,7 @@ import {
   FeasibilityStatus,
   FormStep,
   LeadStage,
-} from "../../shared/domain/index.js";
+} from "@vamo/shared";
 
 export type LeadDraftDocument = HydratedDocument<LeadDraft>;
 
@@ -479,4 +479,3 @@ LeadDraftSchema.index({ updatedAt: -1 });
 LeadDraftSchema.index({ "meta.isSubmitted": 1 });
 LeadDraftSchema.index({ "payload.contact.contactInformation.email": 1 });
 LeadDraftSchema.index({ "payload.contact.contactInformation.phone": 1 });
-

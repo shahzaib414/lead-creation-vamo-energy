@@ -3,11 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import { InjectConnection } from "@nestjs/mongoose";
 import { Connection } from "mongoose";
 
-import {
-  FeasibilityStatus,
-  FormStep,
-  LeadStage,
-} from "./shared/domain/index.js";
+import { FeasibilityStatus, FormStep, LeadStage } from "@vamo/shared";
 
 @Injectable()
 export class AppService {
