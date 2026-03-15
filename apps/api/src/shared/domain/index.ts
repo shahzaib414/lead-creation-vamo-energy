@@ -1,2 +1,1 @@
-export * from "./lead.types.js";
-
+export * from "@vamo/shared";

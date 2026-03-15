@@ -2,10 +2,11 @@
   "name": "vamo-energy-prototype",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
-    "build": "npm run build -w @vamo/api",
+    "build": "npm run build -w @vamo/shared && npm run build -w @vamo/api",
     "start": "npm run start -w @vamo/api",
     "start:dev": "npm run start:dev -w @vamo/api",
     "lint": "eslint .",
