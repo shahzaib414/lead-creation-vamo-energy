@@ -1,0 +1,25 @@
+{
+  "name": "vamo-energy-prototype",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @vamo/api",
+    "start": "npm run start -w @vamo/api",
+    "start:dev": "npm run start:dev -w @vamo/api",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down",
+    "docker:mongo:up": "docker compose up --build -d mongodb",
+    "docker:mongo:down": "docker compose stop mongodb"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.22.0",
+    "eslint": "^9.22.0",
+    "globals": "^16.0.0",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.26.0"
+  }
+}
