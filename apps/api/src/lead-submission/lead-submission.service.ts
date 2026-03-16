@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 
 import { LeadStage } from "@vamo/shared";
+import { FeasibilityStatus } from "@vamo/shared";
 
 import { LeadDraftsRepository } from "../lead-drafts/lead-drafts.repository.js";
 import { LeadFeasibilityService } from "../lead-drafts/services/lead-feasibility.service.js";
@@ -41,6 +42,12 @@ export class LeadSubmissionService {
       feasibilityStatus
     );
 
+    if (feasibilityStatus === FeasibilityStatus.Infeasible) {
+      throw new BadRequestException(
+        "Lead draft is not feasible and cannot be submitted"
+      );
+    }
+
     if (leadStage === LeadStage.LeadCapture) {
       throw new BadRequestException(
         "Lead draft is incomplete and cannot be submitted yet"
@@ -63,6 +70,7 @@ export class LeadSubmissionService {
 
     return {
       leadStage,
+      feasibilityStatus,
       dataAcquisitionLink: null,
       appointmentBookingLink: null,
     };

@@ -146,10 +146,11 @@ export class LeadDraftsService {
   }
 
   private toLeadDraftResponse(
-    leadDraft: Pick<LeadDraftDocument, "leadStage">
+    leadDraft: Pick<LeadDraftDocument, "leadStage" | "feasibilityStatus">
   ): LeadStageResponseDto {
     return {
       leadStage: leadDraft.leadStage,
+      feasibilityStatus: leadDraft.feasibilityStatus,
       dataAcquisitionLink: null,
       appointmentBookingLink: null,
     };
