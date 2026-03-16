@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectConnection } from "@nestjs/mongoose";
-import { Connection } from "mongoose";
+import type { Connection } from "mongoose";
 
 import { FeasibilityStatus, FormStep, LeadStage } from "@vamo/shared";
 

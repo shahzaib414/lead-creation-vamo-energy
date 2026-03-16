@@ -1,5 +1,3 @@
-export const LEAD_API_VERSION = "1.2.0";
-
 export enum Salutation {
   Frau = "Frau",
   Mann = "Mann",

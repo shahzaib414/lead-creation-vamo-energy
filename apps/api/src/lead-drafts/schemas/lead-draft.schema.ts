@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument } from "mongoose";
+import type { HydratedDocument } from "mongoose";
 
 import {
   ADDITIONAL_DISPOSAL_VALUES,
@@ -15,7 +15,6 @@ import {
   IMMO_TYPE_VALUES,
   INSTALLATION_LOCATION_CEILING_HEIGHT_VALUES,
   JA_NEIN_VALUES,
-  LEAD_API_VERSION,
   LOCATION_HEATING_VALUES,
   OWNERSHIP_TYPE_VALUES,
   PROJECT_TIMELINE_VALUES,
@@ -34,7 +33,7 @@ export type LeadDraftDocument = HydratedDocument<LeadDraft>;
 @Schema({ _id: false })
 export class PictureUrl {
   @Prop({ required: true, trim: true })
-  url!: string;
+  url: string = "";
 }
 
 export const PictureUrlSchema = SchemaFactory.createForClass(PictureUrl);
@@ -352,11 +351,6 @@ export const ProjectPayloadSchema = SchemaFactory.createForClass(ProjectPayload)
 
 @Schema({ _id: false })
 export class LeadPayload {
-  @Prop({ required: true, default: LEAD_API_VERSION, enum: [LEAD_API_VERSION] })
-  version!: string;
-
-  @Prop({ required: false, trim: true })
-  id?: string;
 
   @Prop({ type: ContactPayloadSchema, required: false })
   contact?: ContactPayload;
@@ -373,109 +367,51 @@ export class LeadPayload {
 
 export const LeadPayloadSchema = SchemaFactory.createForClass(LeadPayload);
 
-@Schema({ _id: false })
-export class LeadDraftProgress {
-  @Prop({
-    required: true,
-    enum: Object.values(FormStep),
-    default: FormStep.LeadContact,
-  })
-  currentStep!: FormStep;
+@Schema({
+  timestamps: true,
+  collection: "lead_drafts",
+  versionKey: "recordVersion",
+})
+export class LeadDraft {
+  @Prop({ required: true, unique: true, trim: true })
+  draftId: string = "";
 
-  @Prop({
-    type: [String],
-    required: true,
-    enum: Object.values(FormStep),
-    default: [],
-  })
-  completedSteps!: FormStep[];
+  @Prop({ type: LeadPayloadSchema, required: true, default: () => ({}) })
+  payload: LeadPayload = {};
 
   @Prop({
     required: true,
     enum: Object.values(FormStep),
     default: FormStep.LeadContact,
   })
-  lastSavedStep!: FormStep;
-}
+  currentStep: FormStep = FormStep.LeadContact;
 
-export const LeadDraftProgressSchema =
-  SchemaFactory.createForClass(LeadDraftProgress);
-
-@Schema({ _id: false })
-export class LeadDraftEvaluation {
   @Prop({
     required: true,
     enum: Object.values(LeadStage),
     default: LeadStage.LeadCapture,
   })
-  leadStage!: LeadStage;
+  leadStage: LeadStage = LeadStage.LeadCapture;
 
   @Prop({
     required: true,
     enum: Object.values(FeasibilityStatus),
     default: FeasibilityStatus.Unknown,
   })
-  feasibilityStatus!: FeasibilityStatus;
+  feasibilityStatus: FeasibilityStatus = FeasibilityStatus.Unknown;
 
-  @Prop({ type: [String], required: true, default: [] })
-  blockingReasons!: string[];
-
-  @Prop({ type: [String], required: true, default: [] })
-  missingFields!: string[];
-}
-
-export const LeadDraftEvaluationSchema =
-  SchemaFactory.createForClass(LeadDraftEvaluation);
-
-@Schema({ _id: false })
-export class LeadDraftMeta {
   @Prop({ required: true, default: false })
-  isSubmitted!: boolean;
+  isSubmitted: boolean = false;
 
-  @Prop({ required: false })
-  submittedAt?: Date;
-
-  @Prop({ required: false, trim: true })
-  source?: string;
-}
-
-export const LeadDraftMetaSchema = SchemaFactory.createForClass(LeadDraftMeta);
-
-@Schema({ timestamps: true, collection: "lead_drafts" })
-export class LeadDraft {
-  @Prop({ required: true, unique: true, trim: true })
-  draftId!: string;
-
-  @Prop({ required: true, default: LEAD_API_VERSION, enum: [LEAD_API_VERSION] })
-  version!: string;
-
-  @Prop({ required: false, trim: true })
-  id?: string;
-
-  @Prop({ type: LeadPayloadSchema, required: true, default: () => ({}) })
-  payload!: LeadPayload;
-
-  @Prop({ type: LeadDraftProgressSchema, required: true, default: () => ({}) })
-  progress!: LeadDraftProgress;
-
-  @Prop({
-    type: LeadDraftEvaluationSchema,
-    required: true,
-    default: () => ({}),
-  })
-  evaluation!: LeadDraftEvaluation;
-
-  @Prop({ type: LeadDraftMetaSchema, required: true, default: () => ({}) })
-  meta!: LeadDraftMeta;
-
-  createdAt!: Date;
-  updatedAt!: Date;
+  recordVersion: number = 1;
+  createdAt: Date = new Date();
+  updatedAt: Date = new Date();
 }
 
 export const LeadDraftSchema = SchemaFactory.createForClass(LeadDraft);
 
 LeadDraftSchema.index({ draftId: 1 }, { unique: true });
 LeadDraftSchema.index({ updatedAt: -1 });
-LeadDraftSchema.index({ "meta.isSubmitted": 1 });
+LeadDraftSchema.index({ isSubmitted: 1 });
 LeadDraftSchema.index({ "payload.contact.contactInformation.email": 1 });
 LeadDraftSchema.index({ "payload.contact.contactInformation.phone": 1 });

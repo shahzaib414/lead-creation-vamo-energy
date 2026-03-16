@@ -1,6 +1,7 @@
 {
   "name": "@vamo/api",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "start": "node dist/main.js",

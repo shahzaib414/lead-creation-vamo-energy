@@ -140,16 +140,6 @@ export class CreateContactDto {
   @ValidateNested()
   @Type(() => CreateContactInformationDto)
   contactInformation!: CreateContactInformationDto;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => AddressDto)
-  address?: AddressDto;
-
-  @IsOptional()
-  @ValidateNested()
-  @Type(() => MarketingDto)
-  marketing?: MarketingDto;
 }
 
 export class BuildingInformationDto {
@@ -266,6 +256,22 @@ export class EnergyRelevantInformationDto {
   @IsOptional()
   @IsEnum(APARTMENT_HEATING_SYSTEM_VALUES)
   apartmentHeatingSystem?: string;
+}
+
+export class HotWaterDto {
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  numberOfBathtubs?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  numberOfShowers?: number;
+
+  @IsOptional()
+  @IsEnum(SHOWER_TYPE_VALUES)
+  typeOfShowers?: string;
 }
 
 export class BuildingDto {
@@ -434,22 +440,6 @@ export class ProjectTechnicalDetailsDto {
   @ValidateNested()
   @Type(() => ProjectPicturesDto)
   pictures?: ProjectPicturesDto;
-}
-
-export class HotWaterDto {
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  numberOfBathtubs?: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  numberOfShowers?: number;
-
-  @IsOptional()
-  @IsEnum(SHOWER_TYPE_VALUES)
-  typeOfShowers?: string;
 }
 
 export class ProjectDto extends ProjectTechnicalDetailsDto {}
