@@ -3,6 +3,7 @@ import { z } from "zod";
 const appEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().default(3000),
+  DRAFT_TTL_HOURS: z.coerce.number().int().positive().default(168),
   MONGODB_URI: z
     .string()
     .min(1, "MONGODB_URI is required")
@@ -14,4 +15,3 @@ export type AppEnv = z.infer<typeof appEnvSchema>;
 export function validateEnv(config: Record<string, unknown>): AppEnv {
   return appEnvSchema.parse(config);
 }
-

@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { randomUUID } from "crypto";
 
 import { FeasibilityStatus, FormStep, LeadStage } from "@vamo/shared";
@@ -18,6 +19,7 @@ import { LeadStageResponseDto } from "../shared/dto/lead-stage-response.dto.js";
 @Injectable()
 export class LeadDraftsService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly leadDraftsRepository: LeadDraftsRepository,
     private readonly leadDraftFormStageValidationService: LeadDraftFormStageValidationService,
     private readonly leadFeasibilityService: LeadFeasibilityService,
@@ -34,6 +36,7 @@ export class LeadDraftsService {
       leadStage: LeadStage.LeadCapture,
       feasibilityStatus: FeasibilityStatus.Unknown,
       isSubmitted: false,
+      expiresAt: this.getDraftExpiryDate(),
     });
 
     return this.toLeadDraftResponse(leadDraft);
@@ -70,6 +73,7 @@ export class LeadDraftsService {
       currentStep: updateLeadDraftDto.formStep,
       feasibilityStatus,
       leadStage,
+      expiresAt: this.getDraftExpiryDate(),
     });
 
     if (!updatedDraft) {
@@ -154,5 +158,11 @@ export class LeadDraftsService {
       dataAcquisitionLink: null,
       appointmentBookingLink: null,
     };
+  }
+
+  private getDraftExpiryDate(): Date {
+    const draftTtlHours = this.configService.get<number>("DRAFT_TTL_HOURS", 168);
+
+    return new Date(Date.now() + draftTtlHours * 60 * 60 * 1000);
   }
 }

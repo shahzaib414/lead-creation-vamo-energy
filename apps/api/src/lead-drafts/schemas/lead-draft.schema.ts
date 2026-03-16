@@ -401,6 +401,9 @@ export class LeadDraft {
 
   @Prop({ required: true, default: false })
   isSubmitted: boolean = false;
+
+  @Prop({ required: true })
+  expiresAt: Date = new Date();
   
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
@@ -411,5 +414,6 @@ export const LeadDraftSchema = SchemaFactory.createForClass(LeadDraft);
 LeadDraftSchema.index({ draftId: 1 }, { unique: true });
 LeadDraftSchema.index({ updatedAt: -1 });
 LeadDraftSchema.index({ isSubmitted: 1 });
+LeadDraftSchema.index({ expiresAt: 1 });
 LeadDraftSchema.index({ "payload.contact.contactInformation.email": 1 });
 LeadDraftSchema.index({ "payload.contact.contactInformation.phone": 1 });
