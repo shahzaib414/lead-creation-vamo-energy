@@ -6,6 +6,7 @@ import { AppController } from "./app.controller.js";
 import { AppService } from "./app.service.js";
 import { validateEnv } from "./config/app-env.js";
 import { LeadDraftsModule } from "./lead-drafts/lead-drafts.module.js";
+import { LeadSubmissionModule } from "./lead-submission/lead-submission.module.js";
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LeadDraftsModule } from "./lead-drafts/lead-drafts.module.js";
       }),
     }),
     LeadDraftsModule,
+    LeadSubmissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

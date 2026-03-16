@@ -4,7 +4,6 @@ import { randomUUID } from "crypto";
 import { FeasibilityStatus, FormStep, LeadStage } from "@vamo/shared";
 
 import { CreateLeadDraftDto } from "./dto/create-lead-draft.dto.js";
-import { LeadDraftResponseDto } from "./dto/lead-draft-response.dto.js";
 import { UpdateLeadDraftDto } from "./dto/update-lead-draft.dto.js";
 import { LeadDraftsRepository } from "./lead-drafts.repository.js";
 import type {
@@ -14,6 +13,7 @@ import type {
 import { LeadDraftFormStageValidationService } from "./services/lead-draft-form-stage-validation.service.js";
 import { LeadFeasibilityService } from "./services/lead-feasibility.service.js";
 import { LeadStageService } from "./services/lead-stage.service.js";
+import { LeadStageResponseDto } from "../shared/dto/lead-stage-response.dto.js";
 
 @Injectable()
 export class LeadDraftsService {
@@ -147,7 +147,7 @@ export class LeadDraftsService {
 
   private toLeadDraftResponse(
     leadDraft: Pick<LeadDraftDocument, "leadStage">
-  ): LeadDraftResponseDto {
+  ): LeadStageResponseDto {
     return {
       leadStage: leadDraft.leadStage,
       dataAcquisitionLink: null,

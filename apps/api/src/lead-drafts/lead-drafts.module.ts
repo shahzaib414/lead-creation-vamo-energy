@@ -26,6 +26,11 @@ import { LeadStageService } from "./services/lead-stage.service.js";
     LeadFeasibilityService,
     LeadStageService,
   ],
-  exports: [LeadDraftsService],
+  exports: [
+    LeadDraftsService,
+    LeadDraftsRepository,
+    LeadFeasibilityService,
+    LeadStageService,
+  ],
 })
 export class LeadDraftsModule {}

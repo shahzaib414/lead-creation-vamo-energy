@@ -1,6 +1,6 @@
 import { LeadStage } from "@vamo/shared";
 
-export class LeadDraftResponseDto {
+export class LeadStageResponseDto {
   leadStage!: LeadStage;
   dataAcquisitionLink!: string | null;
   appointmentBookingLink!: string | null;
