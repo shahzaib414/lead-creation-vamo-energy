@@ -370,7 +370,6 @@ export const LeadPayloadSchema = SchemaFactory.createForClass(LeadPayload);
 @Schema({
   timestamps: true,
   collection: "lead_drafts",
-  versionKey: "recordVersion",
 })
 export class LeadDraft {
   @Prop({ required: true, unique: true, trim: true })
@@ -402,8 +401,7 @@ export class LeadDraft {
 
   @Prop({ required: true, default: false })
   isSubmitted: boolean = false;
-
-  recordVersion: number = 1;
+  
   createdAt: Date = new Date();
   updatedAt: Date = new Date();
 }

@@ -16,4 +16,14 @@ export class LeadDraftsRepository {
 
     return leadDraft.toObject();
   }
+
+  async findByDraftId(draftId: string) {
+    return this.leadDraftModel.findOne({ draftId }).lean();
+  }
+
+  async updateByDraftId(draftId: string, update: Partial<LeadDraft>) {
+    return this.leadDraftModel
+      .findOneAndUpdate({ draftId }, update, { new: true })
+      .lean();
+  }
 }
