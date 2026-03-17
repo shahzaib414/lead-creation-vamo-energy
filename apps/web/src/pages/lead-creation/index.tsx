@@ -27,7 +27,11 @@ import { submitLeadDraft } from "../../lib/api/leadSubmission";
 import { buildSubmitLeadDraftPayload } from "../../lib/api/leadSubmissionPayloads";
 import { validateLeadDraftStep } from "../../lib/forms/leadDraftForm.schema";
 import type { LeadDraftFormValues } from "../../lib/forms/leadDraftForm.types";
-import { readLeadDraftId, writeLeadDraftId } from "../../lib/session/leadDraftSession";
+import {
+  clearLeadDraftId,
+  readLeadDraftId,
+  writeLeadDraftId,
+} from "../../lib/session/leadDraftSession";
 import { uploadLeadPictures } from "../../lib/uploads/uploadLeadPictures";
 
 const { Paragraph, Text } = Typography;
@@ -57,6 +61,7 @@ export function LeadCreationPage() {
   const [isPreparingUploads, setIsPreparingUploads] = useState(false);
   const [isUploadingPictures, setIsUploadingPictures] = useState(false);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
+  const [isSubmittedSuccessfully, setIsSubmittedSuccessfully] = useState(false);
   const uploadInFlightRef = useRef(false);
 
   const {
@@ -197,10 +202,18 @@ export function LeadCreationPage() {
         draftId,
         buildSubmitLeadDraftPayload(uploadedPictures)
       );
+      clearLeadDraftId();
+      setDraftId(null);
+      setIsSubmittedSuccessfully(true);
       message.success(`Lead submitted at ${response.leadStage} stage.`);
     } finally {
       setIsSubmittingLead(false);
     }
+  }
+
+  function handleGoHome() {
+    clearLeadDraftId();
+    window.location.assign("/");
   }
 
   async function handleNext() {
@@ -321,9 +334,7 @@ export function LeadCreationPage() {
           <p className="lead-panel__eyebrow">Vamo Energy</p>
           <h1>Staged Lead Funnel</h1>
           <Paragraph className="lead-panel__body">
-            This frontend focuses only on the guided intake UI for now. The staged
-            structure mirrors the product decisions we already captured in the backend
-            and implementation draft.
+            From first contact to submission-ready leads.
           </Paragraph>
           <Divider />
           <Steps current={currentStepIndex} direction="vertical" items={stepItems} />
@@ -332,10 +343,25 @@ export function LeadCreationPage() {
         <Card
           className="lead-form-card"
           bordered={false}
-          title={currentStep.title}
-          extra={<Text type="secondary">{currentStep.description}</Text>}
+          title={isSubmittedSuccessfully ? "Thank you" : currentStep.title}
+          extra={
+            isSubmittedSuccessfully ? null : (
+              <Text type="secondary">{currentStep.description}</Text>
+            )
+          }
         >
-          {isInfeasible ? (
+          {isSubmittedSuccessfully ? (
+            <Result
+              status="success"
+              title="Thank you for your submission"
+              subTitle="Our team will review your details and reach out to you shortly."
+              extra={
+                <Button type="primary" onClick={handleGoHome}>
+                  Home
+                </Button>
+              }
+            />
+          ) : isInfeasible ? (
             <Result
               status="warning"
               title="We can’t proceed with this setup right now"
