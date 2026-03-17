@@ -1,6 +1,7 @@
 import { Input, InputNumber, Radio, Select, Space, Typography } from "antd";
 import { Controller, type UseFormReturn } from "react-hook-form";
 
+import type { SelectOption } from "../../lib/options/toSelectOptions";
 import { yesNoOptions } from "../../config/leadFormOptions";
 import type { LeadDraftFormValues } from "../../lib/forms/leadDraftForm.types";
 
@@ -33,6 +34,7 @@ export function ControlledInput({
             onBlur={field.onBlur}
             onChange={field.onChange}
             value={typeof field.value === "string" ? field.value : ""}
+            size="large"
             status={error ? "error" : undefined}
           />
           {error ? <Text type="danger">{error}</Text> : null}
@@ -64,6 +66,7 @@ export function ControlledInputNumber({
             style={{ width: "100%" }}
             value={typeof field.value === "number" ? field.value : undefined}
             onChange={(value) => field.onChange(value ?? undefined)}
+            size="large"
             status={error ? "error" : ""}
           />
           {error ? <Text type="danger">{error}</Text> : null}
@@ -83,7 +86,7 @@ export function ControlledSelect({
   control: LeadFormControl;
   name: keyof LeadDraftFormValues;
   label: string;
-  options: string[];
+  options: SelectOption[];
   error?: string;
 }) {
   return (
@@ -94,9 +97,12 @@ export function ControlledSelect({
         <Space direction="vertical" style={{ width: "100%" }} size={6}>
           <Text strong>{label}</Text>
           <Select
+            style={{ width: "100%" }}
             value={typeof field.value === "string" ? field.value : undefined}
             onChange={field.onChange}
-            options={options.map((option) => ({ label: option, value: option }))}
+            options={options}
+            size="large"
+            placeholder="Select an option"
             status={error ? "error" : ""}
           />
           {error ? <Text type="danger">{error}</Text> : null}
@@ -127,9 +133,12 @@ export function ControlledSegmentedSelect({
         <Space direction="vertical" style={{ width: "100%" }} size={6}>
           <Text strong>{label}</Text>
           <Select
+            style={{ width: "100%" }}
             value={typeof field.value === "string" ? field.value : undefined}
             onChange={field.onChange}
             options={options}
+            size="large"
+            placeholder="Select an option"
             status={error ? "error" : ""}
           />
           {error ? <Text type="danger">{error}</Text> : null}

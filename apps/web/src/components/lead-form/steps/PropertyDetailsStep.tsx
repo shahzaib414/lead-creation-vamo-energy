@@ -1,6 +1,10 @@
 import { Col, Row } from "antd";
 
-import { constructionYearRangeOptions, typeOfHeatingOptions } from "../../../config/leadFormOptions";
+import {
+  constructionYearRangeOptions,
+  heritageProtectionOptions,
+  typeOfHeatingOptions,
+} from "../../../config/leadFormOptions";
 import {
   ControlledInput,
   ControlledInputNumber,
@@ -98,10 +102,7 @@ export function PropertyDetailsStep({
           control={control}
           name="heritageProtection"
           label="Heritage protected?"
-          options={[
-            { label: "Ja", value: "Ja" },
-            { label: "Nein", value: "Nein" },
-          ]}
+          options={heritageProtectionOptions}
           error={errors.heritageProtection?.message}
         />
       </Col>
