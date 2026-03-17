@@ -4,6 +4,11 @@ const appEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().default(3000),
   DRAFT_TTL_HOURS: z.coerce.number().int().positive().default(168),
+  ASSET_PRESIGN_TTL_MINUTES: z.coerce.number().int().positive().default(15),
+  ASSET_MAX_TOTAL_SIZE_MB: z.coerce.number().int().positive().default(100),
+  AWS_REGION: z.string().min(1, "AWS_REGION is required"),
+  AWS_S3_BUCKET: z.string().min(1, "AWS_S3_BUCKET is required"),
+  AWS_S3_ASSET_PREFIX: z.string().min(1).default("drafts"),
   MONGODB_URI: z
     .string()
     .min(1, "MONGODB_URI is required")

@@ -5,6 +5,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { AppController } from "./app.controller.js";
 import { AppService } from "./app.service.js";
 import { validateEnv } from "./config/app-env.js";
+import { LeadAssetsModule } from "./lead-assets/lead-assets.module.js";
 import { LeadDraftsModule } from "./lead-drafts/lead-drafts.module.js";
 import { LeadSubmissionModule } from "./lead-submission/lead-submission.module.js";
 
@@ -20,6 +21,7 @@ import { LeadSubmissionModule } from "./lead-submission/lead-submission.module.j
         uri: configService.getOrThrow<string>("MONGODB_URI"),
       }),
     }),
+    LeadAssetsModule,
     LeadDraftsModule,
     LeadSubmissionModule,
   ],

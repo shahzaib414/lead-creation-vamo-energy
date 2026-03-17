@@ -31,6 +31,7 @@ import { LeadStageService } from "./services/lead-stage.service.js";
     LeadDraftsRepository,
     LeadFeasibilityService,
     LeadStageService,
+    LeadDraftFormStageValidationService,
   ],
 })
 export class LeadDraftsModule {}
