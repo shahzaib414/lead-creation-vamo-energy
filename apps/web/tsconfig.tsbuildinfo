@@ -1,0 +1,1 @@
+{"root":["./src/main.tsx","./src/app/app.tsx","./src/app/providers/appproviders.tsx","./src/domains/lead/config/leadformoptions.ts","./src/domains/lead/config/leadformsteps.ts","./src/domains/lead/forms/leaddraftform.schema.ts","./src/domains/lead/forms/leaddraftform.types.ts","./src/domains/lead/pages/leadcreationpage.tsx"],"version":"5.9.3"}
