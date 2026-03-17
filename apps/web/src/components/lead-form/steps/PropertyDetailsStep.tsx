@@ -3,6 +3,7 @@ import { Col, Row } from "antd";
 import {
   constructionYearRangeOptions,
   heritageProtectionOptions,
+  showerTypeOptions,
   typeOfHeatingOptions,
 } from "../../../config/leadFormOptions";
 import {
@@ -104,6 +105,31 @@ export function PropertyDetailsStep({
           label="Heritage protected?"
           options={heritageProtectionOptions}
           error={errors.heritageProtection?.message}
+        />
+      </Col>
+      <Col xs={24} md={12}>
+        <ControlledInputNumber
+          control={control}
+          name="numberOfBathtubs"
+          label="Number of bathtubs"
+          error={errors.numberOfBathtubs?.message}
+        />
+      </Col>
+      <Col xs={24} md={12}>
+        <ControlledInputNumber
+          control={control}
+          name="numberOfShowers"
+          label="Number of showers"
+          error={errors.numberOfShowers?.message}
+        />
+      </Col>
+      <Col xs={24} md={12}>
+        <ControlledSelect
+          control={control}
+          name="typeOfShowers"
+          label="Type of shower"
+          options={showerTypeOptions}
+          error={errors.typeOfShowers?.message}
         />
       </Col>
     </Row>

@@ -5,6 +5,7 @@ import {
   IsEmail,
   IsEnum,
   IsInt,
+  IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
@@ -38,84 +39,105 @@ import {
 
 const PHONE_WITH_COUNTRY_CODE_PATTERN = /^\+\d[\d\s()-]*$/;
 const COUNTRY_CODE_PATTERN = /^[A-Z]{2}$/;
+const invalidTextMessage = (field: string) => `${field} must be text`;
+const requiredTextMessage = (field: string) => `${field} is required`;
+const invalidEnumMessage = (field: string) =>
+  `${field} has an unsupported value`;
+const invalidIntegerMessage = (field: string) =>
+  `${field} must be a whole number`;
+const minValueMessage = (field: string, min: number) =>
+  `${field} must be at least ${min}`;
+const invalidBooleanMessage = (field: string) =>
+  `${field} must be true or false`;
+const invalidArrayMessage = (field: string) => `${field} must be a list`;
 
 export class AddressDto {
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("street") })
   street?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("city") })
   city?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("postalCode") })
   postalCode?: string;
 
   @IsOptional()
-  @Matches(COUNTRY_CODE_PATTERN)
+  @Matches(COUNTRY_CODE_PATTERN, {
+    message: "countryCode must be a two-letter country code like DE",
+  })
   countryCode?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("addressAddition") })
   addressAddition?: string;
 }
 
 export class MarketingDto {
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("customerLoyaltyProgramType") })
   customerLoyaltyProgramType?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("customerLoyaltyProgramId") })
   customerLoyaltyProgramId?: string;
 }
 
 export class ContactInformationDto {
   @IsOptional()
-  @IsEnum(SALUTATION_VALUES)
+  @IsEnum(SALUTATION_VALUES, { message: invalidEnumMessage("salutation") })
   salutation?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("firstName") })
   firstName?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("lastName") })
   lastName?: string;
 
   @IsOptional()
-  @Matches(PHONE_WITH_COUNTRY_CODE_PATTERN)
+  @Matches(PHONE_WITH_COUNTRY_CODE_PATTERN, {
+    message:
+      "phone must include a country code, for example +49 172 2049937",
+  })
   phone?: string;
 
   @IsOptional()
-  @IsEmail()
+  @IsEmail({}, { message: "email must be a valid email address" })
   email?: string;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("newsletterSingleOptIn") })
   newsletterSingleOptIn?: boolean;
 }
 
 export class CreateContactInformationDto {
   @IsOptional()
-  @IsEnum(SALUTATION_VALUES)
+  @IsEnum(SALUTATION_VALUES, { message: invalidEnumMessage("salutation") })
   salutation?: string;
 
-  @IsString()
+  @IsString({ message: invalidTextMessage("firstName") })
+  @IsNotEmpty({ message: requiredTextMessage("firstName") })
   firstName!: string;
 
-  @IsString()
+  @IsString({ message: invalidTextMessage("lastName") })
+  @IsNotEmpty({ message: requiredTextMessage("lastName") })
   lastName!: string;
 
-  @Matches(PHONE_WITH_COUNTRY_CODE_PATTERN)
+  @Matches(PHONE_WITH_COUNTRY_CODE_PATTERN, {
+    message:
+      "phone must include a country code, for example +49 172 2049937",
+  })
   phone!: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: "email must be a valid email address" })
   email!: string;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("newsletterSingleOptIn") })
   newsletterSingleOptIn?: boolean;
 }
 
@@ -144,133 +166,143 @@ export class CreateContactDto {
 
 export class BuildingInformationDto {
   @IsOptional()
-  @IsEnum(IMMO_TYPE_VALUES)
+  @IsEnum(IMMO_TYPE_VALUES, { message: invalidEnumMessage("immoType") })
   immoType?: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(1)
+  @IsInt({ message: invalidIntegerMessage("residentialUnits") })
+  @Min(1, { message: minValueMessage("residentialUnits", 1) })
   residentialUnits?: number;
  
   @IsOptional()
-  @IsEnum(JA_NEIN_VALUES)
+  @IsEnum(JA_NEIN_VALUES, { message: invalidEnumMessage("heritageProtection") })
   heritageProtection?: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("constructionYear") })
+  @Min(0, { message: minValueMessage("constructionYear", 0) })
   constructionYear?: number;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("constructionYearString") })
   constructionYearString?: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("livingSpace") })
+  @Min(0, { message: minValueMessage("livingSpace", 0) })
   livingSpace?: number;
 
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("personsHousehold") })
+  @Min(0, { message: minValueMessage("personsHousehold", 0) })
   personsHousehold?: number;
  
   @IsOptional()
-  @IsEnum(BOILER_ROOM_SIZE_VALUES)
+  @IsEnum(BOILER_ROOM_SIZE_VALUES, {
+    message: invalidEnumMessage("boilerRoomSize"),
+  })
   boilerRoomSize?: string;
 
   @IsOptional()
-  @IsEnum(INSTALLATION_LOCATION_CEILING_HEIGHT_VALUES)
+  @IsEnum(INSTALLATION_LOCATION_CEILING_HEIGHT_VALUES, {
+    message: invalidEnumMessage("installationLocationCeilingHeight"),
+  })
   installationLocationCeilingHeight?: string;
 
   @IsOptional()
-  @IsEnum(JA_NEIN_VALUES)
+  @IsEnum(JA_NEIN_VALUES, { message: invalidEnumMessage("widthPathway") })
   widthPathway?: string;
 
   @IsOptional()
-  @IsEnum(JA_NEIN_VALUES)
+  @IsEnum(JA_NEIN_VALUES, { message: invalidEnumMessage("heightPathway") })
   heightPathway?: string;
 
   @IsOptional()
-  @IsEnum(ROOMS_BETWEEN_HEATING_ROOM_AND_OUTDOOR_UNIT_VALUES)
+  @IsEnum(ROOMS_BETWEEN_HEATING_ROOM_AND_OUTDOOR_UNIT_VALUES, {
+    message: invalidEnumMessage("roomsBetweenHeatingRoomAndOutdoorUnit"),
+  })
   roomsBetweenHeatingRoomAndOutdoorUnit?: string;
 
   @IsOptional()
-  @IsEnum(FLOOR_LOCATION_VALUES)
+  @IsEnum(FLOOR_LOCATION_VALUES, { message: invalidEnumMessage("meterClosetLocation") })
   meterClosetLocation?: string;
 
   @IsOptional()
-  @IsEnum(FLOOR_LOCATION_VALUES)
+  @IsEnum(FLOOR_LOCATION_VALUES, {
+    message: invalidEnumMessage("electricityConnectionLocation"),
+  })
   electricityConnectionLocation?: string;
 
   @IsOptional()
-  @IsEnum(GROUNDING_TYPE_VALUES)
+  @IsEnum(GROUNDING_TYPE_VALUES, { message: invalidEnumMessage("groundingType") })
   groundingType?: string;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("hasSolarThermalSystem") })
   hasSolarThermalSystem?: boolean;
 }
 
 export class OwnershipRelationshipsDto {
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("ownershipRelationship") })
   ownershipRelationship?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("ownershipRelationshipExplanation") })
   ownershipRelationshipExplanation?: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("numberOfOwners") })
+  @Min(0, { message: minValueMessage("numberOfOwners", 0) })
   numberOfOwners?: number;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("ownerOccupiedHousing") })
   ownerOccupiedHousing?: boolean;
 
   @IsOptional()
-  @IsEnum(OWNERSHIP_TYPE_VALUES)
+  @IsEnum(OWNERSHIP_TYPE_VALUES, { message: invalidEnumMessage("type") })
   type?: string;
 }
 
 export class EnergyRelevantInformationDto {
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("heatedArea") })
+  @Min(0, { message: minValueMessage("heatedArea", 0) })
   heatedArea?: number;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("heatedAreaString") })
   heatedAreaString?: string;
 
   @IsOptional()
-  @IsEnum(TYPE_OF_HEATING_VALUES)
+  @IsEnum(TYPE_OF_HEATING_VALUES, { message: invalidEnumMessage("typeOfHeating") })
   typeOfHeating?: string;
 
   @IsOptional()
-  @IsEnum(LOCATION_HEATING_VALUES)
+  @IsEnum(LOCATION_HEATING_VALUES, { message: invalidEnumMessage("locationHeating") })
   locationHeating?: string;
 
   @IsOptional()
-  @IsEnum(APARTMENT_HEATING_SYSTEM_VALUES)
+  @IsEnum(APARTMENT_HEATING_SYSTEM_VALUES, {
+    message: invalidEnumMessage("apartmentHeatingSystem"),
+  })
   apartmentHeatingSystem?: string;
 }
 
 export class HotWaterDto {
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("numberOfBathtubs") })
+  @Min(0, { message: minValueMessage("numberOfBathtubs", 0) })
   numberOfBathtubs?: number;
 
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("numberOfShowers") })
+  @Min(0, { message: minValueMessage("numberOfShowers", 0) })
   numberOfShowers?: number;
 
   @IsOptional()
-  @IsEnum(SHOWER_TYPE_VALUES)
+  @IsEnum(SHOWER_TYPE_VALUES, { message: invalidEnumMessage("typeOfShowers") })
   typeOfShowers?: string;
 }
 
@@ -303,104 +335,109 @@ export class BuildingDto {
 
 export class HeatingSystemDto {
   @IsOptional()
-  @IsEnum(SYSTEM_TYPE_VALUES)
+  @IsEnum(SYSTEM_TYPE_VALUES, { message: invalidEnumMessage("systemType") })
   systemType?: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("consumption") })
+  @Min(0, { message: minValueMessage("consumption", 0) })
   consumption?: number;
 
   @IsOptional()
-  @IsEnum(CONSUMPTION_UNIT_VALUES)
+  @IsEnum(CONSUMPTION_UNIT_VALUES, { message: invalidEnumMessage("consumptionUnit") })
   consumptionUnit?: string;
 
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("constructionYearHeatingSystem") })
+  @Min(0, { message: minValueMessage("constructionYearHeatingSystem", 0) })
   constructionYearHeatingSystem?: number;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("constructionYearHeatingSystemString") })
   constructionYearHeatingSystemString?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("model") })
   model?: string;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("floorHeatingConnectedToReturnPipe") })
   floorHeatingConnectedToReturnPipe?: boolean;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("floorHeatingOwnHeatingCircuit") })
   floorHeatingOwnHeatingCircuit?: boolean;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("floorHeatingOnlyInSmallRooms") })
   floorHeatingOnlyInSmallRooms?: boolean;
 
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("numberOfFloorHeatingDistributors") })
+  @Min(0, { message: minValueMessage("numberOfFloorHeatingDistributors", 0) })
   numberOfFloorHeatingDistributors?: number;
 
   @IsOptional()
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: invalidIntegerMessage("numberOfRadiators") })
+  @Min(0, { message: minValueMessage("numberOfRadiators", 0) })
   numberOfRadiators?: number;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("domesticHotWaterByHeatpump") })
   domesticHotWaterByHeatpump?: boolean;
 
   @IsOptional()
-  @IsEnum(DOMESTIC_HOT_WATER_CIRCULATION_PUMP_VALUES)
+  @IsEnum(DOMESTIC_HOT_WATER_CIRCULATION_PUMP_VALUES, {
+    message: invalidEnumMessage("domesticHotWaterCirculationPump"),
+  })
   domesticHotWaterCirculationPump?: string;
 
   @IsOptional()
-  @IsEnum(DOMESTIC_WATER_STATION_VALUES)
+  @IsEnum(DOMESTIC_WATER_STATION_VALUES, {
+    message: invalidEnumMessage("domestic_water_station"),
+  })
   domestic_water_station?: string;
 }
 
 export class PictureUrlDto {
-  @IsString()
+  @IsString({ message: invalidTextMessage("url") })
+  @IsNotEmpty({ message: requiredTextMessage("url") })
   url!: string;
 }
 
 export class ProjectPicturesDto {
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: invalidArrayMessage("outdoorUnitLocation") })
   @ValidateNested({ each: true })
   @Type(() => PictureUrlDto)
   outdoorUnitLocation?: PictureUrlDto[];
 
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: invalidArrayMessage("outdoorUnitLocationWithArea") })
   @ValidateNested({ each: true })
   @Type(() => PictureUrlDto)
   outdoorUnitLocationWithArea?: PictureUrlDto[];
 
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: invalidArrayMessage("heatingRoom") })
   @ValidateNested({ each: true })
   @Type(() => PictureUrlDto)
   heatingRoom?: PictureUrlDto[];
 
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: invalidArrayMessage("meterClosetWithDoorOpen") })
   @ValidateNested({ each: true })
   @Type(() => PictureUrlDto)
   meterClosetWithDoorOpen?: PictureUrlDto[];
 
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: invalidArrayMessage("meterClosetSlsSwitchDetailed") })
   @ValidateNested({ each: true })
   @Type(() => PictureUrlDto)
   meterClosetSlsSwitchDetailed?: PictureUrlDto[];
 
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: invalidArrayMessage("floorHeatingDistributionWithDoorOpen") })
   @ValidateNested({ each: true })
   @Type(() => PictureUrlDto)
   floorHeatingDistributionWithDoorOpen?: PictureUrlDto[];
@@ -408,32 +445,37 @@ export class ProjectPicturesDto {
 
 export class ProjectTechnicalDetailsDto {
   @IsOptional()
-  @IsEnum(PROJECT_TIMELINE_VALUES)
+  @IsEnum(PROJECT_TIMELINE_VALUES, { message: invalidEnumMessage("timeline") })
   timeline?: string;
 
   @IsOptional()
-  @IsEnum(HOUSEHOLD_INCOME_VALUES)
+  @IsEnum(HOUSEHOLD_INCOME_VALUES, { message: invalidEnumMessage("householdIncome") })
   householdIncome?: string;
 
   @IsOptional()
-  @IsEnum(FOUNDATION_CONSTRUCTION_STATUS_VALUES)
+  @IsEnum(FOUNDATION_CONSTRUCTION_STATUS_VALUES, {
+    message: invalidEnumMessage("statusOfFoundationConstruction"),
+  })
   statusOfFoundationConstruction?: string;
 
   @IsOptional()
-  @IsString()
+  @IsString({ message: invalidTextMessage("infosLeadsource") })
   infosLeadsource?: string;
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("fullReplacementOfHeatingSystemPlanned") })
   fullReplacementOfHeatingSystemPlanned?: boolean;
 
   @IsOptional()
-  @IsArray()
-  @IsEnum(ADDITIONAL_DISPOSAL_VALUES, { each: true })
+  @IsArray({ message: invalidArrayMessage("additionalDisposal") })
+  @IsEnum(ADDITIONAL_DISPOSAL_VALUES, {
+    each: true,
+    message: invalidEnumMessage("additionalDisposal"),
+  })
   additionalDisposal?: string[];
 
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: invalidBooleanMessage("shouldKeepSolarThermalSystem") })
   shouldKeepSolarThermalSystem?: boolean;
 
   @IsOptional()

@@ -1,13 +1,19 @@
 import {
   BoilerRoomSize,
+  ConsumptionUnit,
+  DomesticHotWaterCirculationPump,
+  DomesticWaterStation,
   FloorLocation,
+  FoundationConstructionStatus,
   GroundingType,
+  HouseholdIncome,
   ImmoType,
   InstallationLocationCeilingHeight,
   JaNein,
   LocationHeating,
   ProjectTimeline,
   RoomsBetweenHeatingRoomAndOutdoorUnit,
+  ShowerType,
   SystemType,
   TypeOfHeating,
 } from "@vamo/shared";
@@ -96,4 +102,53 @@ export const projectTimelineLabels: Record<ProjectTimeline, string> = {
 export const heritageProtectionLabels: Record<JaNein, string> = {
   [JaNein.Ja]: "Yes",
   [JaNein.Nein]: "No",
+};
+
+export const yesNoPathLabels: Record<JaNein, string> = {
+  [JaNein.Ja]: "Yes",
+  [JaNein.Nein]: "No",
+};
+
+export const consumptionUnitLabels: Record<ConsumptionUnit, string> = {
+  [ConsumptionUnit.Liter]: "Liters (l)",
+  [ConsumptionUnit.KilowattHours]: "Kilowatt hours (kWh)",
+};
+
+export const householdIncomeLabels: Record<HouseholdIncome, string> = {
+  [HouseholdIncome.MoreThan40kGross]: "More than 40k gross",
+  [HouseholdIncome.LessThan40kGross]: "Less than 40k gross",
+  [HouseholdIncome.NoAnswer]: "Prefer not to say",
+};
+
+export const foundationConstructionStatusLabels: Record<
+  FoundationConstructionStatus,
+  string
+> = {
+  [FoundationConstructionStatus.Vamo]: "Handled by Vamo",
+  [FoundationConstructionStatus.Customer]: "Handled by customer",
+  [FoundationConstructionStatus.NotRequired]: "No foundation required",
+};
+
+export const showerTypeLabels: Record<ShowerType, string> = {
+  [ShowerType.ShowerHead]: "Standard shower head",
+  [ShowerType.Raindance]: "Rain shower head",
+  [ShowerType.Waterfall]: "Waterfall shower",
+};
+
+export const domesticHotWaterCirculationPumpLabels: Record<
+  DomesticHotWaterCirculationPump,
+  string
+> = {
+  [DomesticHotWaterCirculationPump.No]: "No",
+  [DomesticHotWaterCirculationPump.Unknown]: "Unknown",
+  [DomesticHotWaterCirculationPump.YesButInactive]: "Yes, but inactive",
+  [DomesticHotWaterCirculationPump.YesAndActive]: "Yes, and active",
+};
+
+export const domesticWaterStationLabels: Record<DomesticWaterStation, string> = {
+  [DomesticWaterStation.No]: "No",
+  [DomesticWaterStation.Unknown]: "Unknown",
+  [DomesticWaterStation.Yes]: "Yes",
+  [DomesticWaterStation.WaterFilterAndPressureReducer]:
+    "Water filter and pressure reducer",
 };

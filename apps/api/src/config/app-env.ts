@@ -3,6 +3,7 @@ import { z } from "zod";
 const appEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().default(3000),
+  CORS_ORIGIN: z.string().min(1).default("http://localhost:5173"),
   DRAFT_TTL_HOURS: z.coerce.number().int().positive().default(168),
   ASSET_PRESIGN_TTL_MINUTES: z.coerce.number().int().positive().default(15),
   ASSET_MAX_TOTAL_SIZE_MB: z.coerce.number().int().positive().default(100),

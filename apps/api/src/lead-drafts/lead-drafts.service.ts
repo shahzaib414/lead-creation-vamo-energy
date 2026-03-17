@@ -150,9 +150,13 @@ export class LeadDraftsService {
   }
 
   private toLeadDraftResponse(
-    leadDraft: Pick<LeadDraftDocument, "leadStage" | "feasibilityStatus">
+    leadDraft: Pick<
+      LeadDraftDocument,
+      "draftId" | "leadStage" | "feasibilityStatus"
+    >
   ): LeadStageResponseDto {
     return {
+      draftId: leadDraft.draftId,
       leadStage: leadDraft.leadStage,
       feasibilityStatus: leadDraft.feasibilityStatus,
       dataAcquisitionLink: null,

@@ -1,11 +1,18 @@
-import { Alert, Button, Card, Divider, Space, Steps, Typography } from "antd";
+import { Alert, App as AntApp, Button, Card, Divider, Space, Steps, Typography } from "antd";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { FormStep } from "@vamo/shared";
 
 import { LeadStepFields } from "../../components/lead-form/LeadStepFields";
 import { leadFormSteps } from "../../config/leadFormSteps";
+import {
+  buildCreateLeadDraftPayload,
+  createLeadDraft,
+  updateLeadDraft,
+} from "../../lib/api/leadDrafts";
 import { validateLeadDraftStep } from "../../lib/forms/leadDraftForm.schema";
 import type { LeadDraftFormValues } from "../../lib/forms/leadDraftForm.types";
+import { readLeadDraftId, writeLeadDraftId } from "../../lib/session/leadDraftSession";
 
 const { Paragraph, Text } = Typography;
 
@@ -21,8 +28,11 @@ const defaultValues: LeadDraftFormValues = {
 };
 
 export function LeadCreationPage() {
+  const { message } = AntApp.useApp();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [stepError, setStepError] = useState<string | null>(null);
+  const [isSubmittingStep, setIsSubmittingStep] = useState(false);
+  const [draftId, setDraftId] = useState<string | null>(() => readLeadDraftId());
 
   const {
     control,
@@ -50,7 +60,7 @@ export function LeadCreationPage() {
     []
   );
 
-  function handleNext() {
+  async function handleNext() {
     clearErrors();
     setStepError(null);
 
@@ -72,8 +82,36 @@ export function LeadCreationPage() {
       return;
     }
 
-    if (currentStepIndex < leadFormSteps.length - 1) {
-      setCurrentStepIndex((previous) => previous + 1);
+    try {
+      if (currentStep.key === "leadContact") {
+        setIsSubmittingStep(true);
+        const contactPayload = buildCreateLeadDraftPayload(values);
+        const response = draftId
+          ? await updateLeadDraft(draftId, {
+              formStep: FormStep.LeadContact,
+              contact: contactPayload.contact,
+            })
+          : await createLeadDraft(contactPayload);
+
+        if (response.draftId) {
+          setDraftId(response.draftId);
+          writeLeadDraftId(response.draftId);
+        }
+      }
+
+      if (currentStepIndex < leadFormSteps.length - 1) {
+        setCurrentStepIndex((previous) => previous + 1);
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while saving this step.";
+
+      setStepError(errorMessage);
+      message.error(errorMessage);
+    } finally {
+      setIsSubmittingStep(false);
     }
   }
 
@@ -118,7 +156,7 @@ export function LeadCreationPage() {
                 Back
               </Button>
               <div className="lead-form-card__actions-right">
-                <Button type="primary" onClick={handleNext}>
+                <Button type="primary" onClick={handleNext} loading={isSubmittingStep}>
                   {currentStepIndex === leadFormSteps.length - 1
                     ? "Submit later"
                     : "Continue"}
