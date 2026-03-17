@@ -11,7 +11,6 @@ export type LeadDraftFormValues = {
   lastName: string;
   phone: string;
   email: string;
-  newsletterSingleOptIn: boolean;
   immoType?: string;
   ownerOccupiedHousing?: boolean;
   residentialUnits?: number;

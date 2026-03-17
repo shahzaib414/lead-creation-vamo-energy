@@ -1,5 +1,5 @@
 import { AppProviders } from "./providers/AppProviders";
-import { LeadCreationPage } from "../domains/lead/pages/LeadCreationPage";
+import { LeadCreationPage } from "../pages/lead-creation";
 import "./styles.css";
 
 export default function App() {

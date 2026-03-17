@@ -1,4 +1,4 @@
-import type { LeadFormStepKey } from "../forms/leadDraftForm.types";
+import type { LeadFormStepKey } from "../lib/forms/leadDraftForm.types";
 
 export const leadFormSteps: Array<{
   key: LeadFormStepKey;
