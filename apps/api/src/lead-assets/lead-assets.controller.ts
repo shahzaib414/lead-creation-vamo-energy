@@ -8,10 +8,11 @@ export class LeadAssetsController {
   constructor(private readonly leadAssetsService: LeadAssetsService) {}
 
   @Post(":id/assets/prepare")
-  prepareUploads(
+  async prepareUploads(
     @Param("id") id: string,
     @Body() prepareLeadAssetUploadsDto: PrepareLeadAssetUploadsDto
   ) {
-    return this.leadAssetsService.prepareUploads(id, prepareLeadAssetUploadsDto);
+    const response = await this.leadAssetsService.prepareUploads(id, prepareLeadAssetUploadsDto);
+    return response;
   }
 }

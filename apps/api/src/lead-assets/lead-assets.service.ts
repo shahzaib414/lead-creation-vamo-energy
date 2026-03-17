@@ -48,9 +48,9 @@ export class LeadAssetsService {
       leadDraft.payload
     );
 
-    if (feasibilityStatus !== FeasibilityStatus.Feasible) {
+    if (feasibilityStatus === FeasibilityStatus.Infeasible) {
       throw new BadRequestException(
-        "Asset uploads are only available for feasible lead drafts"
+        "Asset uploads are not available for infeasible lead drafts"
       );
     }
 

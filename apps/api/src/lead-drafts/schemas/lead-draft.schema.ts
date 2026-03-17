@@ -32,8 +32,11 @@ export type LeadDraftDocument = HydratedDocument<LeadDraft>;
 
 @Schema({ _id: false })
 export class PictureUrl {
-  @Prop({ required: true, trim: true })
-  url: string = "";
+  @Prop({ required: false, trim: true })
+  url?: string;
+
+  @Prop({ required: false, trim: true })
+  objectKey?: string;
 }
 
 export const PictureUrlSchema = SchemaFactory.createForClass(PictureUrl);

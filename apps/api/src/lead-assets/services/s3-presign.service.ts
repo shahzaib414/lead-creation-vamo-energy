@@ -29,6 +29,14 @@ export class S3PresignService {
   constructor(private readonly configService: ConfigService) {
     this.s3Client = new S3Client({
       region: this.configService.getOrThrow<string>("AWS_REGION"),
+      credentials: {
+        accessKeyId: this.configService.getOrThrow<string>("AWS_ACCESS_KEY_ID"),
+        secretAccessKey: this.configService.getOrThrow<string>(
+          "AWS_SECRET_ACCESS_KEY"
+        ),
+      },
+      requestChecksumCalculation: "WHEN_REQUIRED",
+      responseChecksumValidation: "WHEN_REQUIRED",
     });
   }
 
@@ -46,7 +54,6 @@ export class S3PresignService {
     const command = new PutObjectCommand({
       Bucket: this.configService.getOrThrow<string>("AWS_S3_BUCKET"),
       Key: objectKey,
-      ContentType: input.mimeType,
     });
 
     const uploadUrl = await getSignedUrl(this.s3Client, command, {
@@ -59,9 +66,7 @@ export class S3PresignService {
       objectKey,
       uploadUrl,
       expiresAt: expiresAt.toISOString(),
-      requiredHeaders: {
-        "content-type": input.mimeType,
-      },
+      requiredHeaders: {},
     };
   }
 

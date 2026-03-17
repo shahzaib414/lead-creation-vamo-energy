@@ -8,6 +8,8 @@ const appEnvSchema = z.object({
   ASSET_PRESIGN_TTL_MINUTES: z.coerce.number().int().positive().default(15),
   ASSET_MAX_TOTAL_SIZE_MB: z.coerce.number().int().positive().default(100),
   AWS_REGION: z.string().min(1, "AWS_REGION is required"),
+  AWS_ACCESS_KEY_ID: z.string().min(1, "AWS_ACCESS_KEY_ID is required"),
+  AWS_SECRET_ACCESS_KEY: z.string().min(1, "AWS_SECRET_ACCESS_KEY is required"),
   AWS_S3_BUCKET: z.string().min(1, "AWS_S3_BUCKET is required"),
   AWS_S3_ASSET_PREFIX: z.string().min(1).default("drafts"),
   MONGODB_URI: z

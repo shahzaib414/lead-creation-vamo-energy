@@ -3,7 +3,6 @@ import type {
   LeadFormStepKey,
 } from "../../lib/forms/leadDraftForm.types";
 import { type LeadFormControl, type LeadFormErrors } from "./LeadFormControls";
-import { LeadReviewSection } from "./LeadReviewSection";
 import { CurrentHeatingStep } from "./steps/CurrentHeatingStep";
 import { HomeTypeStep } from "./steps/HomeTypeStep";
 import { LeadContactStep } from "./steps/LeadContactStep";
@@ -35,6 +34,6 @@ export function LeadStepFields({
     case "technicalDetails":
       return <TechnicalDetailsStep control={control} errors={errors} />;
     case "reviewSubmit":
-      return <LeadReviewSection values={values} />;
+      return null;
   }
 }
