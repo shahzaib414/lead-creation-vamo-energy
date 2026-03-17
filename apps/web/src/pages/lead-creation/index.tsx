@@ -1,15 +1,23 @@
-import { Alert, App as AntApp, Button, Card, Divider, Space, Steps, Typography } from "antd";
+import { Alert, App as AntApp, Button, Card, Divider, Result, Space, Steps, Typography } from "antd";
 import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { FormStep } from "@vamo/shared";
+import { FeasibilityStatus } from "@vamo/shared";
 
 import { LeadStepFields } from "../../components/lead-form/LeadStepFields";
 import { leadFormSteps } from "../../config/leadFormSteps";
 import {
-  buildCreateLeadDraftPayload,
   createLeadDraft,
+  type LeadDraftStageResponse,
   updateLeadDraft,
 } from "../../lib/api/leadDrafts";
+import {
+  buildCreateLeadDraftPayload,
+  buildCurrentHeatingPayload,
+  buildHomeTypePayload,
+  buildLeadContactPayload,
+  buildPropertyDetailsPayload,
+  buildTechnicalDetailsPayload,
+} from "../../lib/api/leadDraftPayloads";
 import { validateLeadDraftStep } from "../../lib/forms/leadDraftForm.schema";
 import type { LeadDraftFormValues } from "../../lib/forms/leadDraftForm.types";
 import { readLeadDraftId, writeLeadDraftId } from "../../lib/session/leadDraftSession";
@@ -33,6 +41,7 @@ export function LeadCreationPage() {
   const [stepError, setStepError] = useState<string | null>(null);
   const [isSubmittingStep, setIsSubmittingStep] = useState(false);
   const [draftId, setDraftId] = useState<string | null>(() => readLeadDraftId());
+  const [isInfeasible, setIsInfeasible] = useState(false);
 
   const {
     control,
@@ -60,6 +69,22 @@ export function LeadCreationPage() {
     []
   );
 
+  function handleLeadDraftResponse(response: LeadDraftStageResponse) {
+    if (response.draftId) {
+      setDraftId(response.draftId);
+      writeLeadDraftId(response.draftId);
+    }
+
+    if (response.feasibilityStatus === FeasibilityStatus.Infeasible) {
+      setIsInfeasible(true);
+      return;
+    }
+
+    if (currentStepIndex < leadFormSteps.length - 1) {
+      setCurrentStepIndex((previous) => previous + 1);
+    }
+  }
+
   async function handleNext() {
     clearErrors();
     setStepError(null);
@@ -83,20 +108,65 @@ export function LeadCreationPage() {
     }
 
     try {
+      setIsSubmittingStep(true);
+
       if (currentStep.key === "leadContact") {
-        setIsSubmittingStep(true);
         const contactPayload = buildCreateLeadDraftPayload(values);
         const response = draftId
-          ? await updateLeadDraft(draftId, {
-              formStep: FormStep.LeadContact,
-              contact: contactPayload.contact,
-            })
+          ? await updateLeadDraft(draftId, buildLeadContactPayload(values))
           : await createLeadDraft(contactPayload);
 
-        if (response.draftId) {
-          setDraftId(response.draftId);
-          writeLeadDraftId(response.draftId);
+        handleLeadDraftResponse(response);
+        return;
+      }
+
+      if (currentStep.key === "homeType") {
+        if (!draftId) {
+          throw new Error("Lead draft is missing. Please restart from the first step.");
         }
+
+        const response = await updateLeadDraft(draftId, buildHomeTypePayload(values));
+        handleLeadDraftResponse(response);
+        return;
+      }
+
+      if (currentStep.key === "currentHeating") {
+        if (!draftId) {
+          throw new Error("Lead draft is missing. Please restart from the first step.");
+        }
+
+        const response = await updateLeadDraft(
+          draftId,
+          buildCurrentHeatingPayload(values)
+        );
+        handleLeadDraftResponse(response);
+        return;
+      }
+
+      if (currentStep.key === "propertyDetails") {
+        if (!draftId) {
+          throw new Error("Lead draft is missing. Please restart from the first step.");
+        }
+
+        const response = await updateLeadDraft(
+          draftId,
+          buildPropertyDetailsPayload(values)
+        );
+        handleLeadDraftResponse(response);
+        return;
+      }
+
+      if (currentStep.key === "technicalDetails") {
+        if (!draftId) {
+          throw new Error("Lead draft is missing. Please restart from the first step.");
+        }
+
+        const response = await updateLeadDraft(
+          draftId,
+          buildTechnicalDetailsPayload(values)
+        );
+        handleLeadDraftResponse(response);
+        return;
       }
 
       if (currentStepIndex < leadFormSteps.length - 1) {
@@ -142,28 +212,36 @@ export function LeadCreationPage() {
           title={currentStep.title}
           extra={<Text type="secondary">{currentStep.description}</Text>}
         >
-          <Space direction="vertical" size="large" style={{ width: "100%" }}>
-            {stepError ? <Alert type="error" message={stepError} showIcon /> : null}
-            <LeadStepFields
-              stepKey={currentStep.key}
-              control={control}
-              errors={errors}
-              isApartment={isApartment}
-              values={values}
+          {isInfeasible ? (
+            <Result
+              status="warning"
+              title="We can’t proceed with this setup right now"
+              subTitle="Based on the answers so far, this lead is currently not feasible for the standard flow."
             />
-            <div className="lead-form-card__actions">
-              <Button onClick={handleBack} disabled={currentStepIndex === 0}>
-                Back
-              </Button>
-              <div className="lead-form-card__actions-right">
-                <Button type="primary" onClick={handleNext} loading={isSubmittingStep}>
-                  {currentStepIndex === leadFormSteps.length - 1
-                    ? "Submit later"
-                    : "Continue"}
+          ) : (
+            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+              {stepError ? <Alert type="error" message={stepError} showIcon /> : null}
+              <LeadStepFields
+                stepKey={currentStep.key}
+                control={control}
+                errors={errors}
+                isApartment={isApartment}
+                values={values}
+              />
+              <div className="lead-form-card__actions">
+                <Button onClick={handleBack} disabled={currentStepIndex === 0}>
+                  Back
                 </Button>
+                <div className="lead-form-card__actions-right">
+                  <Button type="primary" onClick={handleNext} loading={isSubmittingStep}>
+                    {currentStepIndex === leadFormSteps.length - 1
+                      ? "Submit later"
+                      : "Continue"}
+                  </Button>
+                </div>
               </div>
-            </div>
-          </Space>
+            </Space>
+          )}
         </Card>
       </div>
     </div>

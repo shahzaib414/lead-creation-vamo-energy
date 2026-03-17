@@ -1,7 +1,6 @@
-import type { FeasibilityStatus, FormStep, LeadStage } from "@vamo/shared";
+import { type FormStep, type FeasibilityStatus, type LeadStage } from "@vamo/shared";
 
 import { requestJson } from "./client";
-import type { LeadDraftFormValues } from "../forms/leadDraftForm.types";
 
 export type CreateLeadDraftPayload = {
   contact: {
@@ -25,22 +24,63 @@ export type LeadDraftStageResponse = {
 export type UpdateLeadDraftPayload = {
   formStep: FormStep;
   contact?: CreateLeadDraftPayload["contact"];
-};
-
-export function buildCreateLeadDraftPayload(
-  values: Pick<LeadDraftFormValues, "firstName" | "lastName" | "phone" | "email">
-): CreateLeadDraftPayload {
-  return {
-    contact: {
-      contactInformation: {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        phone: values.phone,
-        email: values.email,
-      },
-    },
+  building?: {
+    address?: {
+      street?: string;
+      city?: string;
+      postalCode?: string;
+      countryCode?: string;
+    };
+    buildingInformation?: {
+      immoType?: string;
+      residentialUnits?: number;
+      heritageProtection?: string;
+      constructionYearString?: string;
+      livingSpace?: number;
+      personsHousehold?: number;
+      boilerRoomSize?: string;
+      installationLocationCeilingHeight?: string;
+      widthPathway?: string;
+      heightPathway?: string;
+      roomsBetweenHeatingRoomAndOutdoorUnit?: string;
+      meterClosetLocation?: string;
+      electricityConnectionLocation?: string;
+      groundingType?: string;
+      hasSolarThermalSystem?: boolean;
+    };
+    ownershipRelationships?: {
+      ownerOccupiedHousing?: boolean;
+    };
+    energyRelevantInformation?: {
+      apartmentHeatingSystem?: string;
+      locationHeating?: string;
+      heatedArea?: number;
+      typeOfHeating?: string;
+    };
+    hotWater?: {
+      numberOfBathtubs?: number;
+      numberOfShowers?: number;
+      typeOfShowers?: string;
+    };
   };
-}
+  heatingSystem?: {
+    systemType?: string;
+    consumption?: number;
+    consumptionUnit?: string;
+    constructionYearHeatingSystem?: number;
+    numberOfFloorHeatingDistributors?: number;
+    numberOfRadiators?: number;
+    domesticHotWaterByHeatpump?: boolean;
+    domesticHotWaterCirculationPump?: string;
+    domestic_water_station?: string;
+  };
+  project?: {
+    timeline?: string;
+    householdIncome?: string;
+    statusOfFoundationConstruction?: string;
+    fullReplacementOfHeatingSystemPlanned?: boolean;
+  };
+};
 
 export function createLeadDraft(payload: CreateLeadDraftPayload) {
   return requestJson<LeadDraftStageResponse>("/lead-drafts", {
